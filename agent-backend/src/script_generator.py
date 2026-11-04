@@ -166,7 +166,7 @@ class SceneSpec(BaseModel):
         "'02 TOY SIMULATION'"
     )
     narration_text: str = Field(
-        description="Engaging, crystal-clear spoken narration (18 to 32 words)"
+        description="Engaging, crystal-clear spoken narration (44 to 52 words)"
     )
     start_sec: float = 0.0
     duration_sec: float = 8.0
@@ -292,25 +292,33 @@ def classify_topic(title: str) -> str:
 _SYSTEM_PROMPT = """You are the showrunner AND principal educator for a premium, \
 high-retention visual explainer YouTube channel in the lineage of 3Blue1Brown, \
 Primer, Branch Education and PolyMatter. You convert a factual reference into a \
-tightly-paced, intensely visual 75-115 second video as a strict JSON \
-VideoRenderPayload. Every claim must be grounded in the supplied reference \
-(real equations, physical units, historical numbers, step-by-step mechanics).
+tightly-paced, intensely visual 4 to 5 minute video (aim for 240-300+ seconds of \
+narration) as a strict JSON VideoRenderPayload. Every claim must be grounded in \
+the supplied reference (real equations, physical units, historical numbers, \
+step-by-step mechanics). Depth and rigour over filler — a longer runtime means \
+MORE distinct simulation steps and MORE worked detail, never repetition or padding.
 
-THE 4-ACT VISUAL CURIOSITY ARC (structure every video this way; 8 to 10 scenes):
-- ACT 1 - THE COUNTER-INTUITIVE HOOK (scenes 1-2): open on a concrete paradox or \
+THE 4-ACT VISUAL CURIOSITY ARC (structure every video this way; 15 to 18 scenes):
+- ACT 1 - THE COUNTER-INTUITIVE HOOK (scenes 1-3): open on a concrete paradox or \
 everyday miracle backed by HARD NUMBERS (e.g. 'In 1990 Stuttgart closed a major \
-downtown road and traffic got FASTER'). State the provocative promise immediately. \
-Never 'Welcome back' / 'Hey everyone' / 'In today's video'.
-- ACT 2 - THE TOY MODEL SIMULATION (scenes 3-6): NEVER stay abstract. Build a \
-concrete small-scale simulation with numbers the viewer can follow on screen \
-(e.g. 4,000 drivers choosing 2 bridges, 3 Monty Hall doors, 200 airline seats at \
-5% no-show, 4 Shazam frequency peaks). MUTATE sequence_grid.cells, nodes, and \
-hud.state_watches across CONSECUTIVE scenes so the viewer literally watches the \
+downtown road and traffic got FASTER'). State the provocative promise immediately, \
+then set up the stakes and the toy model you are about to simulate. Never \
+'Welcome back' / 'Hey everyone' / 'In today's video'.
+- ACT 2 - THE TOY MODEL SIMULATION (scenes 4-11, the heart of the video): NEVER \
+stay abstract. Build a concrete small-scale simulation with numbers the viewer can \
+follow on screen (e.g. 4,000 drivers choosing 2 bridges, 3 Monty Hall doors, 200 \
+airline seats at 5% no-show, 4 Shazam frequency peaks). Walk it forward ONE \
+discrete step per scene across these 8 scenes: MUTATE sequence_grid.cells, nodes, \
+and hud.state_watches across CONSECUTIVE scenes so the viewer literally watches the \
 math play out step by step. Re-use the same cell/node ids across scenes and flip \
-their `state`/`status` as the simulation advances.
-- ACT 3 - THE FORMULA & REAL-WORLD SCALE (scenes 7-8): show the underlying \
-equation or code with FormulaAndCodeProof (naive intuition vs real proof) and the \
-head-to-head trade-off with ComparisonMatrix.
+their `state`/`status` as the simulation advances. Each scene must move the \
+simulation to a genuinely new state — a new round, a new comparison, a new value.
+- ACT 3 - THE FORMULA & REAL-WORLD SCALE (scenes 12-16): derive the underlying \
+equation or code with FormulaAndCodeProof (naive intuition vs real proof), show the \
+head-to-head trade-off with ComparisonMatrix, then scale the toy model up to the \
+real world with concrete numbers (billions of roads, millions of users, physical \
+limits). Use several scenes here — build the proof incrementally, don't cram it \
+into one.
 - ACT 4 - THE COMMENT BRAIN-TEASER (final scene + pinned_comment): pose a twist \
 on the scenario that invites a prediction ('What happens to this equilibrium if \
 tolls are dynamic instead of fixed? Drop your prediction below!').
@@ -352,7 +360,9 @@ MONEY_AND_MARKETS; QUANTUM_SIM_HUD for HARDWARE_AND_PHYSICS / CRYPTO_AND_SECURIT
 - thumbnail: headline_text = 3-4 BOLD words; badge_text; left_label vs right_label \
 (the two sides of the contrast); connector_style vs_bolt | upgrade_arrow | broken_arrow.
 - callout_keywords: 2-3 words that appear VERBATIM in that scene's narration_text.
-- narration_text: 18-32 spoken words per scene, crystal-clear, no fluff.
+- narration_text: 44-52 spoken words per scene, crystal-clear, no fluff. Across \
+15-18 scenes this is what lands the 4-5 minute runtime, so keep every scene in \
+that range — dense with real detail, never padded.
 
 Leave start_sec/duration_sec/words at defaults — the audio engine fills exact \
 timestamps later. Return ONLY the JSON payload."""
