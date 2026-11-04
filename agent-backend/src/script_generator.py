@@ -12,16 +12,16 @@ interfaces in `video-engine/src/types/schema.ts` mirror them one-to-one.
 from __future__ import annotations
 
 import json
-import re
-import time
 from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
 try:
     from . import config
+    from . import llm_providers
 except ImportError:  # pragma: no cover
     import config  # type: ignore
+    import llm_providers  # type: ignore
 
 
 # ===========================================================================
@@ -245,48 +245,11 @@ class VideoRenderPayload(BaseModel):
 
 
 # ===========================================================================
-# Gemini client helpers
+# LLM generation (multi-provider with automatic fallback; see llm_providers)
 # ===========================================================================
-def _get_client():
-    """Lazily construct a google-genai client (import + key validation)."""
-    try:
-        from google import genai  # type: ignore
-    except ImportError as exc:  # pragma: no cover
-        raise RuntimeError(
-            "google-genai is not installed. `pip install google-genai`."
-        ) from exc
-    return genai.Client(api_key=config.require_gemini())
-
-
-_RETRYABLE_MARKERS = (
-    "503", "UNAVAILABLE", "500", "502", "504",
-    "OVERLOAD", "HIGH DEMAND", "429", "RESOURCE_EXHAUSTED",
-)
-_RETRY_DELAYS = (4, 10, 25, 60)  # seconds between attempts
-
-
-def _is_retryable(exc: Exception) -> bool:
-    code = getattr(exc, "code", None) or getattr(exc, "status_code", None)
-    if code in (500, 502, 503, 504, 429):
-        return True
-    msg = str(exc).upper()
-    return any(marker in msg for marker in _RETRYABLE_MARKERS)
-
-
-def _generate_resilient(client, **kwargs):
-    """Call Gemini generate_content with backoff on transient overload."""
-    for attempt in range(len(_RETRY_DELAYS) + 1):
-        try:
-            return client.models.generate_content(**kwargs)
-        except Exception as exc:  # noqa: BLE001
-            if attempt == len(_RETRY_DELAYS) or not _is_retryable(exc):
-                raise
-            wait = _RETRY_DELAYS[attempt]
-            print(
-                f"[script] Gemini transient error ({exc}); "
-                f"retry {attempt + 1}/{len(_RETRY_DELAYS)} in {wait}s..."
-            )
-            time.sleep(wait)
+# All structured generation routes through `llm_providers.generate_structured`,
+# which tries Gemini (native structured output) first and transparently falls
+# back across the free OpenAI-compatible providers on overload / quota errors.
 
 
 # ---------------------------------------------------------------------------
@@ -310,18 +273,14 @@ Return only the track id."""
 def classify_topic(title: str) -> str:
     """Best-effort Gemini classification of a custom topic into a track."""
     try:
-        client = _get_client()
-        resp = _generate_resilient(
-            client,
-            model=config.GEMINI_MODEL,
-            contents=f"{_CLASSIFY_PROMPT}\n\nTOPIC: {title}",
-            config={
-                "response_mime_type": "application/json",
-                "response_schema": _TrackChoice,
-                "temperature": 0.1,
-            },
+        choice = llm_providers.generate_structured(
+            _CLASSIFY_PROMPT,
+            f"TOPIC: {title}",
+            _TrackChoice,
+            temperature=0.1,
+            label="track-classify",
         )
-        return _TrackChoice.model_validate_json(resp.text).track
+        return choice.track
     except Exception as exc:  # noqa: BLE001
         print(f"[script] Track classification failed ({exc}); defaulting.")
         return "CS_AND_AI_INTERNALS"
@@ -406,24 +365,19 @@ def generate_script(
     track_category: str,
 ) -> VideoRenderPayload:
     """Generate a fully-typed VideoRenderPayload from a grounded reference."""
-    client = _get_client()
     user_content = (
         f"TRACK: {track_category}\n"
         f"SOURCE URL: {source_url}\n"
         f"TOPIC TITLE: {topic_title}\n\n"
         f"FACTUAL REFERENCE (markdown, may be truncated):\n{reference_markdown}"
     )
-    resp = _generate_resilient(
-        client,
-        model=config.GEMINI_MODEL,
-        contents=[_SYSTEM_PROMPT, user_content],
-        config={
-            "response_mime_type": "application/json",
-            "response_schema": VideoRenderPayload,
-            "temperature": 0.8,
-        },
+    payload = llm_providers.generate_structured(
+        _SYSTEM_PROMPT,
+        user_content,
+        VideoRenderPayload,
+        temperature=0.8,
+        label="script",
     )
-    payload = VideoRenderPayload.model_validate_json(resp.text)
 
     # Force the track we actually selected, and enforce the theme rule.
     payload.track_category = track_category  # type: ignore[assignment]
