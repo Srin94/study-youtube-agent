@@ -1,0 +1,242 @@
+{
+  "track_category": "GAME_THEORY_PARADOXES",
+  "theme_id": "ARCHIVAL_LAB_PAPER",
+  "youtube_title": "Braess's Paradox: Why a New Road Makes Traffic Worse",
+  "youtube_description": "In 1990 a closed road made a city FASTER. We simulate 4,000 drivers to expose Braess's Paradox. 0:00 The paradox 0:16 The toy model 0:32 The math 0:44 The verdict.",
+  "youtube_tags": ["braess paradox", "game theory", "nash equilibrium", "traffic", "math", "networks", "selfish routing", "optimization"],
+  "pinned_comment": "The road only hurts because every driver is selfish. If a central app could ASSIGN routes, the shortcut becomes useful again. So: should your GPS be allowed to send you the slower way for the greater good? Predict the outcome below.",
+  "source_url": "https://en.wikipedia.org/wiki/Braess%27s_paradox",
+  "thumbnail": {
+    "headline_text": "NEW ROAD, SLOWER TRAFFIC",
+    "badge_text": "GAME THEORY",
+    "left_label": "No Shortcut: 65 min",
+    "right_label": "Shortcut: 80 min!",
+    "connector_style": "broken_arrow"
+  },
+  "scenes": [
+    {
+      "scene_id": 1,
+      "chapter_title": "01 THE PARADOX",
+      "narration_text": "Here is a road network. Four thousand drivers leave Start for End every rush hour, and at balance every single one of them arrives in sixty-five minutes.",
+      "start_sec": 0.0,
+      "duration_sec": 8.0,
+      "visual_type": "SystemAndFlowGraph",
+      "camera_focus_node_id": null,
+      "hud": {
+        "track_badge": "GAME THEORY // PARADOX",
+        "core_formula_or_law": "t = cars / 100",
+        "real_world_scale": "4,000 drivers, 2 routes",
+        "governing_rule": "Each road's time depends on how many cars choose it.",
+        "state_watches": [
+          { "label": "Drivers Route A", "value": "2,000", "changed": true },
+          { "label": "Drivers Route B", "value": "2,000", "changed": true },
+          { "label": "Travel Time", "value": "65 min", "changed": true },
+          { "label": "Shortcut", "value": "Closed", "changed": false }
+        ]
+      },
+      "sequence_grid": null,
+      "nodes": [
+        { "id": "start", "label": "Start", "sublabel": "4,000 cars", "tier": 1, "status": "active" },
+        { "id": "a", "label": "Via A", "sublabel": "congested leg", "tier": 2, "status": "neutral" },
+        { "id": "b", "label": "Via B", "sublabel": "fixed leg", "tier": 2, "status": "neutral" },
+        { "id": "end", "label": "End", "sublabel": "destination", "tier": 3, "status": "active" }
+      ],
+      "edges": [
+        { "id": "e1", "source": "start", "target": "a", "label": "cars/100", "packet_color": "orange", "animate_packets": true },
+        { "id": "e2", "source": "a", "target": "end", "label": "45 min", "packet_color": "cyan", "animate_packets": true },
+        { "id": "e3", "source": "start", "target": "b", "label": "45 min", "packet_color": "cyan", "animate_packets": true },
+        { "id": "e4", "source": "b", "target": "end", "label": "cars/100", "packet_color": "orange", "animate_packets": true }
+      ],
+      "stack_layers": [],
+      "formula_proof": null,
+      "comparison_rows": [],
+      "callout_keywords": ["four thousand", "sixty-five minutes"]
+    },
+    {
+      "scene_id": 2,
+      "chapter_title": "02 THE TOY MODEL",
+      "narration_text": "Drivers split evenly, two thousand each way. On every route the congested leg costs twenty minutes, the fixed leg forty-five. Twenty plus forty-five is sixty-five. Perfect balance.",
+      "start_sec": 8.0,
+      "duration_sec": 8.0,
+      "visual_type": "SequenceGridDryRun",
+      "camera_focus_node_id": null,
+      "hud": {
+        "track_badge": "GAME THEORY // PARADOX",
+        "core_formula_or_law": "20 + 45 = 65",
+        "real_world_scale": "Nash equilibrium reached",
+        "governing_rule": "No driver can switch routes to finish any faster.",
+        "state_watches": [
+          { "label": "Drivers Route A", "value": "2,000", "changed": false },
+          { "label": "Drivers Route B", "value": "2,000", "changed": false },
+          { "label": "Travel Time", "value": "65 min", "changed": false },
+          { "label": "Shortcut", "value": "Closed", "changed": false }
+        ]
+      },
+      "sequence_grid": {
+        "title": "The four road legs at balance",
+        "cells": [
+          { "index_label": "Start → A", "value": "2,000 cars · 20 min", "state": "comparing", "pointer_tags": ["congested"] },
+          { "index_label": "A → End", "value": "fixed · 45 min", "state": "default", "pointer_tags": [] },
+          { "index_label": "Start → B", "value": "fixed · 45 min", "state": "default", "pointer_tags": [] },
+          { "index_label": "B → End", "value": "2,000 cars · 20 min", "state": "comparing", "pointer_tags": ["congested"] }
+        ],
+        "highlight_range_start": 0,
+        "highlight_range_end": 3,
+        "step_caption": "Both routes cost 65 min — nobody has any reason to move."
+      },
+      "nodes": [],
+      "edges": [],
+      "stack_layers": [],
+      "formula_proof": null,
+      "comparison_rows": [],
+      "callout_keywords": ["two thousand", "sixty-five"]
+    },
+    {
+      "scene_id": 3,
+      "chapter_title": "03 THE SHORTCUT",
+      "narration_text": "Now the city builds a brand-new super-highway linking the two middles, instant and free. Surely a free shortcut can only help. Watch what every selfish driver does next.",
+      "start_sec": 16.0,
+      "duration_sec": 8.0,
+      "visual_type": "SystemAndFlowGraph",
+      "camera_focus_node_id": "a",
+      "hud": {
+        "track_badge": "GAME THEORY // PARADOX",
+        "core_formula_or_law": "bridge = 0 min",
+        "real_world_scale": "One new zero-cost edge",
+        "governing_rule": "A free link looks like a strict upgrade for everyone.",
+        "state_watches": [
+          { "label": "Drivers Route A", "value": "2,000", "changed": false },
+          { "label": "Drivers Route B", "value": "2,000", "changed": false },
+          { "label": "Travel Time", "value": "65 min", "changed": false },
+          { "label": "Shortcut", "value": "OPEN", "changed": true }
+        ]
+      },
+      "sequence_grid": null,
+      "nodes": [
+        { "id": "start", "label": "Start", "sublabel": "4,000 cars", "tier": 1, "status": "active" },
+        { "id": "a", "label": "Via A", "sublabel": "congested leg", "tier": 2, "status": "bottleneck" },
+        { "id": "b", "label": "Via B", "sublabel": "fixed leg", "tier": 2, "status": "active" },
+        { "id": "end", "label": "End", "sublabel": "destination", "tier": 3, "status": "active" }
+      ],
+      "edges": [
+        { "id": "e1", "source": "start", "target": "a", "label": "cars/100", "packet_color": "orange", "animate_packets": true },
+        { "id": "e2", "source": "a", "target": "end", "label": "45 min", "packet_color": "cyan", "animate_packets": true },
+        { "id": "e3", "source": "start", "target": "b", "label": "45 min", "packet_color": "cyan", "animate_packets": true },
+        { "id": "e4", "source": "b", "target": "end", "label": "cars/100", "packet_color": "orange", "animate_packets": true },
+        { "id": "e5", "source": "a", "target": "b", "label": "0 min", "packet_color": "crimson", "animate_packets": true }
+      ],
+      "stack_layers": [],
+      "formula_proof": null,
+      "comparison_rows": [],
+      "callout_keywords": ["super-highway", "selfish"]
+    },
+    {
+      "scene_id": 4,
+      "chapter_title": "04 THE COLLAPSE",
+      "narration_text": "Everyone takes Start-to-A, hops the free bridge, then B-to-End — chasing both congested legs. Now four thousand cars jam each one. Forty plus forty: eighty minutes. Worse for all.",
+      "start_sec": 24.0,
+      "duration_sec": 8.0,
+      "visual_type": "SequenceGridDryRun",
+      "camera_focus_node_id": null,
+      "hud": {
+        "track_badge": "GAME THEORY // PARADOX",
+        "core_formula_or_law": "40 + 40 = 80",
+        "real_world_scale": "+15 min for everyone",
+        "governing_rule": "Each driver's best move drags the whole system down.",
+        "state_watches": [
+          { "label": "Drivers Route A", "value": "4,000", "changed": true },
+          { "label": "Drivers Route B", "value": "4,000", "changed": true },
+          { "label": "Travel Time", "value": "80 min", "changed": true },
+          { "label": "Shortcut", "value": "Jammed", "changed": true }
+        ]
+      },
+      "sequence_grid": {
+        "title": "After the shortcut opens",
+        "cells": [
+          { "index_label": "Start → A", "value": "4,000 cars · 40 min", "state": "active_focus", "pointer_tags": ["EVERYONE"] },
+          { "index_label": "A → B shortcut", "value": "free · 0 min", "state": "optimal_hit", "pointer_tags": ["the trap"] },
+          { "index_label": "B → End", "value": "4,000 cars · 40 min", "state": "active_focus", "pointer_tags": ["EVERYONE"] },
+          { "index_label": "Old fixed legs", "value": "abandoned", "state": "eliminated", "pointer_tags": [] }
+        ],
+        "highlight_range_start": 0,
+        "highlight_range_end": 2,
+        "step_caption": "Chasing the free bridge pushes the total trip to 80 minutes."
+      },
+      "nodes": [],
+      "edges": [],
+      "stack_layers": [],
+      "formula_proof": null,
+      "comparison_rows": [],
+      "callout_keywords": ["four thousand", "eighty minutes"]
+    },
+    {
+      "scene_id": 5,
+      "chapter_title": "05 THE MATH",
+      "narration_text": "The paradox is pure math. Each driver minimizes their own cost, but the Nash equilibrium of the new network is provably worse than the social optimum of the old one.",
+      "start_sec": 32.0,
+      "duration_sec": 8.0,
+      "visual_type": "FormulaAndCodeProof",
+      "camera_focus_node_id": null,
+      "hud": {
+        "track_badge": "GAME THEORY // PARADOX",
+        "core_formula_or_law": "PoA = 4/3",
+        "real_world_scale": "Up to 33% worse",
+        "governing_rule": "Selfish equilibrium can cost up to 4/3 of the optimum.",
+        "state_watches": [
+          { "label": "Old equilibrium", "value": "65 min", "changed": false },
+          { "label": "New equilibrium", "value": "80 min", "changed": true },
+          { "label": "Price of Anarchy", "value": "1.23x", "changed": true },
+          { "label": "Shortcut", "value": "Harmful", "changed": true }
+        ]
+      },
+      "sequence_grid": null,
+      "nodes": [],
+      "edges": [],
+      "stack_layers": [],
+      "formula_proof": {
+        "language": "text",
+        "title": "Why the free road backfires",
+        "naive_or_before": "cost(route) = congestion + fixed\nA free edge only removes cost\n=> everyone finishes sooner",
+        "optimal_or_after": "each driver min(own cost)\n=> all chase both congested legs\ncost = 4000/100 + 4000/100\n     = 40 + 40 = 80 > 65",
+        "takeaway_caption": "Individually optimal, collectively worse — that's the Nash trap."
+      },
+      "comparison_rows": [],
+      "callout_keywords": ["Nash equilibrium", "social optimum"]
+    },
+    {
+      "scene_id": 6,
+      "chapter_title": "06 THE VERDICT",
+      "narration_text": "So cities like Stuttgart and Seoul tore roads out and traffic improved. Fewer choices, better outcomes. The lesson: in a selfish network, more capacity can mean more delay.",
+      "start_sec": 40.0,
+      "duration_sec": 8.0,
+      "visual_type": "ComparisonMatrix",
+      "camera_focus_node_id": null,
+      "hud": {
+        "track_badge": "GAME THEORY // PARADOX",
+        "core_formula_or_law": "remove edge → faster",
+        "real_world_scale": "Stuttgart, Seoul, NYC",
+        "governing_rule": "Deleting the selfish shortcut restores the better balance.",
+        "state_watches": [
+          { "label": "With shortcut", "value": "80 min", "changed": false },
+          { "label": "Without shortcut", "value": "65 min", "changed": true },
+          { "label": "Improvement", "value": "-15 min", "changed": true },
+          { "label": "Roads removed", "value": "1", "changed": true }
+        ]
+      },
+      "sequence_grid": null,
+      "nodes": [],
+      "edges": [],
+      "stack_layers": [],
+      "formula_proof": null,
+      "comparison_rows": [
+        { "dimension": "Travel time", "baseline_option": "Keep shortcut: 80 min", "clever_option": "Close shortcut: 65 min", "winner": "clever" },
+        { "dimension": "Driver choice", "baseline_option": "More routes", "clever_option": "Fewer routes", "winner": "clever" },
+        { "dimension": "Who decides", "baseline_option": "Selfish routing", "clever_option": "Coordinated routing", "winner": "clever" },
+        { "dimension": "Intuition", "baseline_option": "More road = faster", "clever_option": "Less road = faster", "winner": "clever" }
+      ],
+      "callout_keywords": ["Stuttgart", "more capacity"]
+    }
+  ],
+  "words": [],
+  "total_duration_sec": 48.0
+}
